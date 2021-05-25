@@ -11,7 +11,7 @@ const BRICK_WIDTH = SPACE_FOR_BRICKS / NUM_BRICKS_PER_ROW;
 var i = 0;
 var b = 0;
 var j = 0;
-var brick;
+var asteroid;
 
 //Constants for bullet and ship
 const  SHIP_WIDTH = 80;
@@ -31,10 +31,10 @@ function start() {
 
 //sets up asteriods
 function setAsteroids() { 
-    brick = new Rectangle(BRICK_WIDTH, BRICK_HEIGHT);
-    brick.setPosition(50, 20); 
-    brick.setColor(Color.RED); 
-    add(brick);
+    asteroid = new Rectangle(BRICK_WIDTH, BRICK_HEIGHT);
+    asteroid.setPosition(50, 20); 
+    asteroid.setColor(Color.RED); 
+    add(asteroid);
 }
 
 //moves asteroeids
@@ -58,7 +58,7 @@ function start(){
 	mouseMoveMethod(move);
 	
 	setTimer(drawBullet, 1);
-//bricks	    
+//asteroids	    
     
     for(var n = 0; n < NUM_ROWS; n++){
         for(var j = 0; j < NUM_BRICKS_PER_ROW; j++){
@@ -91,7 +91,7 @@ function drawBricks(x, y, color){
 // This program has a ball bounce around the screen. 
 
 function drawBullet(){
-	bullet.move(x1, dy);
+	bullet.move(e.getX(), dy);
 }
 
 //	getting a game over	
@@ -102,44 +102,37 @@ function lifeLost() {
     	    println("Game Over");
     	}
 }
-	
-	// Bounce off top wall
-	if(ball.getY() - ball.getRadius() < 0){
-		dy = -dy;
+	//shoot from ship
+
 	}
-	//bounce off paddle
-	if(ball.getY() - ball.getRadius() + 3 > getWidth() + PADDLE_OFFSET + PADDLE_HEIGHT
-	&& ball.getX() >= paddle.getX() && ball.getX() <= paddle.getX() + PADDLE_WIDTH){
-	    dy = -dy;
-	}
-	//breaking bricks
-	var left = getElementAt(ball.getX() - ball.getRadius(), ball.getY());
-	var right = getElementAt(ball.getX() + ball.getRadius(), ball.getY());
-	var top = getElementAt(ball.getX(), ball.getY() - ball.getRadius());
-	var bottom = getElementAt(ball.getX(), ball.getY() + ball.getRadius());
+	//breaking asteroids
+	var left = getElementAt(bullet.getX() - bullet.getRadius(), bullet.getY());
+	var right = getElementAt(bullet.getX() + bullet.getRadius(), bullet.getY());
+	var top = getElementAt(bullet.getX(), bullet.getY() - bullet.getRadius());
+	var bottom = getElementAt(bullet.getX(), bullet.getY() + bullet.getRadius());
 	
-	if(left != ball && left != paddle && left != null){
+	if(left != bullet && left != ship && left != null){
 	    remove(left);
 	    dx = -dx;
 	    dy = -dy;
 	    j++;
-	} else if(right != ball && right != paddle && right != null){
+	} else if(right != bullet && right != ship && right != null){
 	    remove(right);
 	    dx = -dx;
 	    dy = -dy;
 	    j++;
-	} else if(top != ball && top != paddle && top != null){
+	} else if(top != bullet && top != ship && top != null){
 	    remove(top);
 	    dy = -dy;
 	    j++;
-	}else if(bottom != ball && bottom != paddle && bottom != null){
+	}else if(bottom != bullet && bottom != ship && bottom != null){
 	    remove(bottom);
 	    dy = -dy;
 	    j++;
 	}
 
 	if(j == i) {
-	    stopTimer(drawBall);
+	    stopTimer(drawBullet);
 	    println("You Win");
 	}
 	

@@ -1,0 +1,160 @@
+
+//Constants for bricks 
+//static.codehs.com
+const NUM_ROWS = 8;
+const BRICK_TOP_OFFSET = 10;
+const BRICK_SPACING = 2;
+const NUM_BRICKS_PER_ROW = 10;
+const BRICK_HEIGHT = 10;
+const SPACE_FOR_BRICKS = getWidth() - (NUM_BRICKS_PER_ROW + 1) * BRICK_SPACING;
+const BRICK_WIDTH = SPACE_FOR_BRICKS / NUM_BRICKS_PER_ROW;
+var i = 0;
+var b = 0;
+var j = 0;
+var brick;
+
+//Constants for bullet and ship
+const  SHIP_WIDTH = 80;
+const  SHIP_HEIGHT = 15;
+const  SHIP_OFFSET = 10;
+
+var ship;
+var bullet;
+var dx = 4;
+var dy = 4;
+var asteroidMoveX = 5;
+var asteroidMoveY = 5;
+
+function start() {
+    setAsteroids(); 
+}
+
+//sets up asteriods
+function setAsteroids() { 
+    brick = new Rectangle(BRICK_WIDTH, BRICK_HEIGHT);
+    brick.setPosition(50, 20); 
+    brick.setColor(Color.RED); 
+    add(brick);
+}
+
+//moves asteroeids
+function moveAsteroids(brick) {
+    var brickX = brick.getX();
+    var brickY = brick.getY();
+    if(brickX > getWidth() - BRICK_WIDTH / 2 || brickX < BRICK_WIDTH / 2){
+        asteroidMoveX = asteroidMoveX * -1;
+    }
+}
+
+//Breakout Code: 
+
+/*
+function start(){
+//bullet and ship code
+	bullet = new Line(x1, y1, x2, y2);
+	bullet.setPosition(x1, dy);
+	add(bullet);
+	drawBullet();
+	mouseMoveMethod(move);
+	
+	setTimer(drawBullet, 1);
+//bricks	    
+    
+    for(var n = 0; n < NUM_ROWS; n++){
+        for(var j = 0; j < NUM_BRICKS_PER_ROW; j++){
+    var x = j;
+    var y = n;
+    var color = Color.red;
+    if(n < 2){
+        color = Color.red;
+    }else if(n < 4){
+        color = Color.orange;
+    }else if(n < 6){
+        color = Color.green;
+    }else if(n < 8){
+        color = Color.blue;
+    }        
+	        drawBricks(x, y, color);
+        }
+    }
+
+}
+//bricks
+
+function drawBricks(x, y, color){
+    brick = new Rectangle (BRICK_WIDTH, BRICK_HEIGHT);
+    brick.setPosition((BRICK_WIDTH + BRICK_SPACING) * x + BRICK_SPACING, (BRICK_HEIGHT + BRICK_SPACING) * y + BRICK_SPACING + BRICK_TOP_OFFSET);
+    brick.setColor(color);
+    add(brick);
+    i++;
+} 
+// This program has a ball bounce around the screen. 
+
+function drawBullet(){
+	bullet.move(x1, dy);
+}
+
+//	getting a game over	
+function lifeLost() {
+		b++;
+    	if(b > 2){
+    	    stopTimer(drawBullet);
+    	    println("Game Over");
+    	}
+}
+	
+	// Bounce off top wall
+	if(ball.getY() - ball.getRadius() < 0){
+		dy = -dy;
+	}
+	//bounce off paddle
+	if(ball.getY() - ball.getRadius() + 3 > getWidth() + PADDLE_OFFSET + PADDLE_HEIGHT
+	&& ball.getX() >= paddle.getX() && ball.getX() <= paddle.getX() + PADDLE_WIDTH){
+	    dy = -dy;
+	}
+	//breaking bricks
+	var left = getElementAt(ball.getX() - ball.getRadius(), ball.getY());
+	var right = getElementAt(ball.getX() + ball.getRadius(), ball.getY());
+	var top = getElementAt(ball.getX(), ball.getY() - ball.getRadius());
+	var bottom = getElementAt(ball.getX(), ball.getY() + ball.getRadius());
+	
+	if(left != ball && left != paddle && left != null){
+	    remove(left);
+	    dx = -dx;
+	    dy = -dy;
+	    j++;
+	} else if(right != ball && right != paddle && right != null){
+	    remove(right);
+	    dx = -dx;
+	    dy = -dy;
+	    j++;
+	} else if(top != ball && top != paddle && top != null){
+	    remove(top);
+	    dy = -dy;
+	    j++;
+	}else if(bottom != ball && bottom != paddle && bottom != null){
+	    remove(bottom);
+	    dy = -dy;
+	    j++;
+	}
+
+	if(j == i) {
+	    stopTimer(drawBall);
+	    println("You Win");
+	}
+	
+}
+*/
+
+//spaceship code
+function drawShip() {
+    ship = new WebImage("https://www.google.com/imgres?imgurl=https%3A%2F%2Flh3.googleusercontent.com%2FRujpAGdIiLJm-x1mD5XsbBocHgnxBD0xXiZ2LFYFZ5uoUoi4lriQRmY9-CxQzia9E2ZpgSlVNq5ncU-aFu_w6PjCPWg%3Dw640-h400-e365-rj-sc0x00ffffff&imgrefurl=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fgalaga-space-ship-shootin%2Fcofmmdlglcgllhnegkfohoenmikgbmbj&tbnid=FwbfAipRmOR7sM&vet=12ahUKEwj5262VnOXwAhUElJ4KHViZDBAQMygIegUIARDgAQ..i&docid=fx_laP7TUH012M&w=640&h=400&itg=1&q=spaceship%20ARCADE&ved=2ahUKEwj5262VnOXwAhUElJ4KHViZDBAQMygIegUIARDgAQ");
+    ship.setSize(SHIP_WIDTH, SHIP_HEIGHT);
+    ship.setPosition(getWidth()/2 - SHIP_WIDTH/2, getHeight() - SHIP_OFFSET - SHIP_HEIGHT);
+    add(ship);
+}
+
+function move(e) {
+    ship.setPosition(e.getX() - SHIP_WIDTH/2, getHeight() - SHIP_OFFSET - SHIP_HEIGHT);
+}
+

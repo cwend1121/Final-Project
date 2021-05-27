@@ -1,153 +1,251 @@
-
-//Constants for bricks 
-//static.codehs.com
-const NUM_ROWS = 8;
-const BRICK_TOP_OFFSET = 10;
-const BRICK_SPACING = 2;
-const NUM_BRICKS_PER_ROW = 10;
-const BRICK_HEIGHT = 10;
-const SPACE_FOR_BRICKS = getWidth() - (NUM_BRICKS_PER_ROW + 1) * BRICK_SPACING;
-const BRICK_WIDTH = SPACE_FOR_BRICKS / NUM_BRICKS_PER_ROW;
-var i = 0;
-var b = 0;
-var j = 0;
+//SPACE MONKEYS (copyright pending)
+//Constants for asteroids 
+/*things to work on (problems for future us):
+*moving aliens
+*space monkeys
+*breaking the monkeys/aliens
+*/
+var asteroidList = []; 
+var NUM_ROWS = 5;
+var ASTEROID_RADIUS = 12;
 var asteroid;
+var ASTEROID_TOP_OFFSET = 10;
+var ASTEROID_SPACING = ASTEROID_RADIUS * 2;
+var NUM_ASTEROIDS_PER_ROW = 10;
+var SPACE_FOR_ASTEROIDS = getWidth() - (NUM_ASTEROIDS_PER_ROW + 1) * ASTEROID_SPACING;
+var brown = new Color(128, 70, 27); 
+var asteroidMoveX;
+var asteroidMoveY;
 
 //Constants for bullet and ship
 const  SHIP_WIDTH = 80;
 const  SHIP_HEIGHT = 15;
-const  SHIP_OFFSET = 10;
-
-var ship;
+const  SHIP_OFFSET = 30;
+const BULLET_RADIUS = 2;
 var bullet;
+var bulletList = []; 
+var helicopter = new WebImage("https://static.codehs.com/img/library/objects/helicopter.png");
+
+//Constants for movement 
+var ship;
+var bulletTimer;
 var dx = 4;
-var dy = 4;
+var dy = -4;
+var startMovement = false;
 var asteroidMoveX = 5;
 var asteroidMoveY = 5;
 
-function start() {
+//Constants for timers and score
+var score = 0;
+var numLives = 3;
+var startGame = 10;
+var winner = false;
+var loser = true;
+
+function start(){
+    //set up the game
+    setBackground();
     setAsteroids(); 
+    setScore();
+    livesLeft();
+    setTimer(gameStart, 100);
+    setTimer(moveAsteroids, 20);
+    
+    //bullet and ship code
+	drawShip();
+    mouseMoveMethod(moveShip);
+	mouseClickMethod(drawBullet);
 }
 
-//sets up asteriods
-function setAsteroids() { 
-    asteroid = new Rectangle(BRICK_WIDTH, BRICK_HEIGHT);
-    asteroid.setPosition(50, 20); 
-    asteroid.setColor(Color.RED); 
-    add(asteroid);
-}
-
-//moves asteroeids
-function moveAsteroids(brick) {
-    var brickX = brick.getX();
-    var brickY = brick.getY();
-    if(brickX > getWidth() - BRICK_WIDTH / 2 || brickX < BRICK_WIDTH / 2){
-        asteroidMoveX = asteroidMoveX * -1;
+//adds background
+function setBackground(){
+    var background = new Rectangle(getWidth(), getHeight());
+    background.setPosition(0, 0); 
+    background.setColor(Color.BLACK); 
+    add(background);
+    
+    for(var i = 0; i < 40; i++){
+        var x = Randomizer.nextInt(10, getWidth());
+        var y = Randomizer.nextInt(10, getHeight());
+        drawStars(x, y);
     }
 }
 
-//Breakout Code: 
+function drawStars(x, y){
+    var star = new Circle(1);
+    star.setPosition(x, y);
+    star.setColor(Color.WHITE);
+    add(star);
+}
 
-/*
-function start(){
-//bullet and ship code
-	bullet = new Line(x1, y1, x2, y2);
-	bullet.setPosition(x1, dy);
-	add(bullet);
-	drawBullet();
-	mouseMoveMethod(move);
-	
-	setTimer(drawBullet, 1);
-//asteroids	    
-    
-    for(var n = 0; n < NUM_ROWS; n++){
-        for(var j = 0; j < NUM_BRICKS_PER_ROW; j++){
-    var x = j;
-    var y = n;
-    var color = Color.red;
-    if(n < 2){
-        color = Color.red;
-    }else if(n < 4){
-        color = Color.orange;
-    }else if(n < 6){
-        color = Color.green;
-    }else if(n < 8){
-        color = Color.blue;
-    }        
-	        drawBricks(x, y, color);
+//sets up asteroids
+function setAsteroids(){ 
+    for (var r = 0; r < NUM_ROWS; r++){
+        for (var c = 0; c < NUM_ASTEROIDS_PER_ROW; c++){
+            asteroid = new Circle(ASTEROID_RADIUS);
+            var asteroidX = ASTEROID_SPACING + c * (ASTEROID_RADIUS + ASTEROID_SPACING);
+            var asteroidY = ASTEROID_TOP_OFFSET + r * (ASTEROID_RADIUS + ASTEROID_SPACING) + 40;
+        
+            asteroid.setPosition(asteroidX, asteroidY); 
+            asteroid.setColor(brown); 
+            add(asteroid);
+            asteroidList.push(asteroid); 
         }
     }
-
-}
-//bricks
-
-function drawBricks(x, y, color){
-    brick = new Rectangle (BRICK_WIDTH, BRICK_HEIGHT);
-    brick.setPosition((BRICK_WIDTH + BRICK_SPACING) * x + BRICK_SPACING, (BRICK_HEIGHT + BRICK_SPACING) * y + BRICK_SPACING + BRICK_TOP_OFFSET);
-    brick.setColor(color);
-    add(brick);
-    i++;
-} 
-// This program has a ball bounce around the screen. 
-
-function drawBullet(){
-	bullet.move(e.getX(), dy);
 }
 
-//	getting a game over	
-function lifeLost() {
-		b++;
-    	if(b > 2){
-    	    stopTimer(drawBullet);
-    	    println("Game Over");
-    	}
+function setScore(){
+    var txt = new Text("Score: " + score, "20pt Arial");
+    txt.setPosition(5, 30);
+    txt.setColor(Color.WHITE);
+    add(txt);
 }
-	//shoot from ship
 
-	}
-	//breaking asteroids
-	var left = getElementAt(bullet.getX() - bullet.getRadius(), bullet.getY());
-	var right = getElementAt(bullet.getX() + bullet.getRadius(), bullet.getY());
-	var top = getElementAt(bullet.getX(), bullet.getY() - bullet.getRadius());
-	var bottom = getElementAt(bullet.getX(), bullet.getY() + bullet.getRadius());
-	
-	if(left != bullet && left != ship && left != null){
-	    remove(left);
-	    dx = -dx;
-	    dy = -dy;
-	    j++;
-	} else if(right != bullet && right != ship && right != null){
-	    remove(right);
-	    dx = -dx;
-	    dy = -dy;
-	    j++;
-	} else if(top != bullet && top != ship && top != null){
-	    remove(top);
-	    dy = -dy;
-	    j++;
-	}else if(bottom != bullet && bottom != ship && bottom != null){
-	    remove(bottom);
-	    dy = -dy;
-	    j++;
-	}
+function livesLeft(){
+    var txt = new Text("Lives: " + numLives, "20pt Arial");
+    txt.setPosition(getWidth() - 95, 30);
+    txt.setColor(Color.WHITE);
+    add(txt);
+/*
+    helicopter.setSize(10, 10);
+    var lives = helicopter;
+    var lives2 = helicopter;
+    var lives3 = helicopter;
+    lives.setPosition (20, 20);
+    lives2.setPosition(40, 20);
+    lives3.setPosition(60, 20);
 
-	if(j == i) {
-	    stopTimer(drawBullet);
-	    println("You Win");
-	}
-	
+    if(ship.getX() == asteroid){
+        numLives--;
+    }
+    if(numLives == 2){
+        remove(lives3);
+    }else if(numLives == 1){
+        remove(lives2);
+    }else if(numLives == 0){
+        remove(lives);
+        println("Game Over");
+    }*/
 }
-*/
+
+function gameStart(){
+    if(startGame == 0){
+        startMovement = true;
+        println("You can start the game");
+    }
+    startGame--;
+}
+
+//moves asteroids 
+
+function moveAsteroids() {
+    if(startMovement == true){
+        if(asteroid.getX() >= getWidth() - ASTEROID_RADIUS * 2){
+            asteroidMoveLeft(); 
+        }
+        if(asteroid.getX() <= ASTEROID_RADIUS * 2){ 
+            asteroidMoveRight(); 
+        }
+    }
+}
+
+function asteroidMoveLeft() {
+    asteroidMoveX = -5; 
+    asteroidMoveY = 0;
+}
+
+function asteroidMoveRight() {
+    asteroidMoveX = 4; 
+    asteroidMoveY = 0;
+    for(var k = 0; k > asteroidList.length; k++) {
+        asteroid.move(asteroidMoveX, asteroidMoveY); 
+    }
+}
+
+function asteroidmoveDown() {
+    asteroidMoveY = 0;
+    asteroidMoveX = 4; 
+}
+
+//getting a game over	
+function gameOver() {
+	var rect = new Rectangle(getWidth(), 30);
+    rect.setPosition(0, getHeight() / 2 - 15);
+    rect.setColor(Color.red);
+    add(rect);
+    
+    var txt = new Text("Game Over. You Lose.", "20pt Arial");
+    txt.setPosition(getWidth() / 2 - 130, getHeight() / 2 + 9);
+    txt.setColor(Color.WHITE);
+    add(txt);
+}
+
+function winGame(){
+    var rect = new Rectangle(getWidth(), 30);
+    rect.setPosition(0, getHeight() / 2 - 15);
+    rect.setColor(Color.green);
+    add(rect);
+    
+    var txt = new Text("You Win. Welcome to the Elite.", "20pt Arial");
+    txt.setPosition(getWidth() / 2 - 180, getHeight() / 2 + 9);
+    txt.setColor(Color.WHITE);
+    add(txt);
+}
 
 //spaceship code
-function drawShip() {
-    ship = new WebImage("https://www.google.com/imgres?imgurl=https%3A%2F%2Flh3.googleusercontent.com%2FRujpAGdIiLJm-x1mD5XsbBocHgnxBD0xXiZ2LFYFZ5uoUoi4lriQRmY9-CxQzia9E2ZpgSlVNq5ncU-aFu_w6PjCPWg%3Dw640-h400-e365-rj-sc0x00ffffff&imgrefurl=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fgalaga-space-ship-shootin%2Fcofmmdlglcgllhnegkfohoenmikgbmbj&tbnid=FwbfAipRmOR7sM&vet=12ahUKEwj5262VnOXwAhUElJ4KHViZDBAQMygIegUIARDgAQ..i&docid=fx_laP7TUH012M&w=640&h=400&itg=1&q=spaceship%20ARCADE&ved=2ahUKEwj5262VnOXwAhUElJ4KHViZDBAQMygIegUIARDgAQ");
-    ship.setSize(SHIP_WIDTH, SHIP_HEIGHT);
+function drawShip(){
+    ship = new WebImage("https://static.codehs.com/img/library/objects/helicopter.png");
+    ship.setSize(40, 40);
     ship.setPosition(getWidth()/2 - SHIP_WIDTH/2, getHeight() - SHIP_OFFSET - SHIP_HEIGHT);
     add(ship);
 }
 
-function move(e) {
+//move ship
+function moveShip(e){
     ship.setPosition(e.getX() - SHIP_WIDTH/2, getHeight() - SHIP_OFFSET - SHIP_HEIGHT);
 }
 
+//shoots bullets
+function drawBullet(e){
+    bullet = new Circle(BULLET_RADIUS);
+    bullet.setPosition(ship.getX() + 20, ship.getY());
+    bullet.setBorderWidth(5);
+    bullet.setBorderColor(Randomizer.nextColor());
+    add(bullet);
+    //if(bulletTimer == false){
+        setTimer(moveBullet, 10);
+        //bulletTimer = true;
+    //}
+    bulletList.push(bullet);
+}
+
+function moveBullet(){
+    for(var i = 0; i < bulletList.length; i++){
+    	bulletList[i].move(0, dy);
+    	
+var left = getElementAt(bulletList[i].getX() - bulletList[i].getRadius(), bulletList[i].getY());
+var right = getElementAt(bulletList[i].getX() + bulletList[i].getRadius(), bulletList[i].getY());
+var top = getElementAt(bulletList[i].getX(), bulletList[i].getY() - bulletList[i].getRadius());
+var bottom = getElementAt(bulletList[i].getX(), bulletList[i].getY() + bulletList[i].getRadius());
+	
+if(left != bulletList[i] && left != ship && left != null && left){
+    remove(left);
+    score++;
+} else if(right != bulletList[i] && right != ship && right != null){
+    remove(right);
+    score++;
+} else if(top != bulletList[i] && top != ship && top != null){
+    remove(top);
+    score++;
+	}else if(bottom != bulletList[i] && bottom != ship && bottom != null){
+    remove(bottom);
+    score++;
+}
+    	
+        if(bulletList[i].getY() <= 0 - BULLET_RADIUS){
+            stopTimer(moveBullet);
+            //bulletTimer = false;
+            bulletList.remove(i);
+        }
+    }
+}

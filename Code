@@ -4,8 +4,6 @@
 *space monkeys - cadence
 *breaking the monkeys/aliens
 *bullet limit
-*start-up line "presenting: SPACE MONKEYS"
-*origin story?
 */
 
 //Constants for asteroids 
@@ -143,32 +141,51 @@ function livesLeft(){
 }
 
 function gameStart(){
-    if(startGame == 0){
+    if(startGame == 10){/*
+        var background = new Rectangle(getWidth(), getHeight());
+        background.setPosition(0, 0); 
+        background.setColor(Color.GREEN); 
+        add(background);
+    
+        var txt = new Text("A group of space monkeys are coming to attack Earth!", "20pt Arial");
+        txt.setPosition(0, 0);
+        txt.setColor(Color.BLACK);
+        add(txt);
+    
+        var txt2 = new Text("Control the helicopter and shoot them down for a prize wothy of a hero.", "20pt Arial");
+        txt.setPosition(0, getHeight() / 3);
+        txt.setColor(Color.BLACK);
+        add(txt2);
+    
+        var txt3 = new Text("Don't fail or else you will die.", "20pt Arial");
+        txt.setPosition(0, getHeight() / 3 + getHeight() / 3);
+        txt.setColor(Color.BLACK);
+        add(txt3);*/
+    }
+    if(startGame == 2){/*
+        remove(background);
+        remove(txt);
+        remove(txt2);
+        remove(txt3);
+        
+        var rect = new Rectangle(getWidth(), 30);
+        rect.setPosition(0, getHeight() / 2 - 15);
+        rect.setColor(Color.GREEN);
+        add(rect);
+    
+        var txt4 = new Text("Presenting: Space Monkeys", "20pt Arial");
+        txt.setPosition(getWidth() / 2 - 180, getHeight() / 2 + 9);
+        txt.setColor(Color.WHITE);
+        add(txt4);
+    */}
+    if(startGame == 0){/*
+        remove(rect);
+        remove(txt4);
+        */
         startMovement = true;
         println("You can start the game");
     }
     startGame--;
-    /*
-    var background = new Rectangle(getWidth(), getHeight());
-    background.setPosition(0, 0); 
-    background.setColor(Color.GREEN); 
-    add(background);
-    
-    var txt = new Text("A group of space monkeys are coming to attack Earth!", "20pt Arial");
-    txt.setPosition(0, 0);
-    txt.setColor(Color.BLACK);
-    add(txt);
-    
-    var txt2 = new Text("Control the helicopter and shoot them down for a prize wothy of a hero.", "20pt Arial");
-    txt.setPosition(0, getHeight() / 3);
-    txt.setColor(Color.BLACK);
-    add(txt2);
-    
-    var txt = new Text("Don't fail or else you will die.", "20pt Arial");
-    txt.setPosition(0, getHeight() / 3 + getHeight() / 3);
-    txt.setColor(Color.BLACK);
-    add(txt);
-    */
 }
 
 //moves asteroids 
@@ -180,14 +197,14 @@ function moveAsteroids() {
 function moveHorizontal() {
     for(var i = 0; i < asteroidList.length; i++) {
         var movement = asteroidList[i];
-           movement.move(vx, vy);
+           movement.move(vx, 0);
     }
 }
 
 function moveVertical(){
     for(var i = 0; i < asteroidList.length; i++){
     var movement = asteroidList[i];
-    movement.setPosition(vx, vy);
+    //movement.setPosition(0, vy);
     }
 }
 
@@ -287,19 +304,14 @@ function checkWall(){
     	// Bounce off right wall
     	if(monkey.getX() + monkey.getRadius() >= getWidth()){
     	    vx = -vx;
+    	    monkey.setPosition(monkey.getX(), monkey.getY() + 15);
         //rows++;
     	}
     	
     	// Bounce off left wall
     	if(monkey.getX() - monkey.getRadius() <= 0){
     	    vx = -vx;
-    	    //moveHorizontal(vx, 0);
-    	    //moveVertical(0, 1);
-    	    /*rows++; 
-    	    if (rows % 2 == 1) {
-    	        x = -x; 
-    	    }
-    	 */      
+            monkey.setPosition(monkey.getX(), monkey.getY() + 15);     
     	}
     }
 }

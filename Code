@@ -6,7 +6,7 @@
 *bullet limit
 */
 
-//Constants for asteroids 
+//Constants For Asteroids 
 var NUM_ROWS = 5;
 var ASTEROID_RADIUS = 12;
 var asteroid;
@@ -26,7 +26,7 @@ var monkeyList = [];
 var MONKEY_TOP_OFFSET = 10; 
 var MONKEY_SPACING = MONKEY_WIDTH;
 
-//Constants for bullet and ship
+//Constants For Bullet And Ship
 const  SHIP_WIDTH = 80;
 const  SHIP_HEIGHT = 15;
 const  SHIP_OFFSET = 30;
@@ -35,7 +35,7 @@ var bullet;
 var bulletList = []; 
 var helicopter = new WebImage("https://static.codehs.com/img/library/objects/helicopter.png");
 
-//Constants for movement 
+//Constants For Movement 
 var ship;
 var bulletTimer;
 var dx = 4;
@@ -45,8 +45,9 @@ var vy = 0;
 var startMovement = false;
 var asteroidMoveX = 5;
 var asteroidMoveY = 5;
+var counter = 0;
 
-//Constants for timers and score
+//Constants For Timers And Score
 var score = 0;
 var numLives = 3;
 var startGame = 10;
@@ -54,7 +55,7 @@ var winner = false;
 var loser = true;
 
 function start(){
-    //set up the game
+    //Set Up The Game
     setBackground();
     setAsteroids(); 
     setScore();
@@ -62,13 +63,13 @@ function start(){
     setTimer(gameStart, 100);
     setTimer(moveAsteroids, 250);
     
-    //bullet and ship code
+    //Bullet And Ship Code
 	drawShip();
     mouseMoveMethod(moveShip);
 	mouseClickMethod(drawBullet);
 }
 
-//adds background
+//AddsBbackground
 function setBackground(){
     var background = new Rectangle(getWidth(), getHeight());
     background.setPosition(0, 0); 
@@ -89,7 +90,7 @@ function drawStars(x, y){
     add(star);
 }
 
-//sets up asteroids
+//Sets Up Asteroids
 function setAsteroids(){ 
     for (var r = 0; r < NUM_ROWS; r++){
         for (var c = 0; c < NUM_ASTEROIDS_PER_ROW; c++){
@@ -117,7 +118,6 @@ function livesLeft(){
     txt.setPosition(getWidth() - 95, 30);
     txt.setColor(Color.WHITE);
     add(txt);
-    
 /*
     helicopter.setSize(10, 10);
     var lives = helicopter;
@@ -180,15 +180,14 @@ function gameStart(){
     */}
     if(startGame == 0){/*
         remove(rect);
-        remove(txt4);
-        */
+        remove(txt4);*/
         startMovement = true;
         println("You can start the game");
     }
     startGame--;
 }
 
-//moves asteroids 
+//Moves Asteroids 
 function moveAsteroids() {
     checkWall();
     moveHorizontal();
@@ -203,12 +202,17 @@ function moveHorizontal() {
 
 function moveVertical(){
     for(var i = 0; i < asteroidList.length; i++){
-    var movement = asteroidList[i];
-    //movement.setPosition(0, vy);
+        var movement = asteroidList[i];
+        movement.move(0, vy);
+        counter++;
+        if(counter == 3){
+            movement.move(0, vy);
+            counter = 0;
+        }
     }
 }
 
-//getting a game over	
+//Getting A Game Over	
 function gameOver() {
 	var rect = new Rectangle(getWidth(), 30);
     rect.setPosition(0, getHeight() / 2 - 15);
@@ -233,7 +237,7 @@ function winGame(){
     add(txt);
 }
 
-//spaceship code
+//Spaceship Code
 function drawShip(){
     ship = new WebImage("https://static.codehs.com/img/library/objects/helicopter.png");
     ship.setSize(40, 40);
@@ -241,12 +245,12 @@ function drawShip(){
     add(ship);
 }
 
-//move ship
+//Move Ship
 function moveShip(e){
     ship.setPosition(e.getX() - SHIP_WIDTH/2, getHeight() - SHIP_OFFSET - SHIP_HEIGHT);
 }
 
-//shoots bullets
+//Shoots Bullets
 function drawBullet(e){
     bullet = new Circle(BULLET_RADIUS);
     bullet.setPosition(ship.getX() + 20, ship.getY());
@@ -304,14 +308,15 @@ function checkWall(){
     	// Bounce off right wall
     	if(monkey.getX() + monkey.getRadius() >= getWidth()){
     	    vx = -vx;
-    	    monkey.setPosition(monkey.getX(), monkey.getY() + 15);
-        //rows++;
+    	    moveVertical();
+    	    vy = 1;
     	}
     	
     	// Bounce off left wall
     	if(monkey.getX() - monkey.getRadius() <= 0){
     	    vx = -vx;
-            monkey.setPosition(monkey.getX(), monkey.getY() + 15);     
+    	    moveVertical();
+    	    vy = 1;
     	}
     }
 }

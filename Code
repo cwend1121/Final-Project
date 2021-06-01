@@ -1,5 +1,4 @@
 //SPACE MONKEYS (copyright pending)
-//Constants for asteroids 
 /*things to work on (problems for future us):
 *moving aliens - by tomorrow, everyone use brains to fix
 *space monkeys - cadence
@@ -8,6 +7,8 @@
 *start-up line "presenting: SPACE MONKEYS"
 *origin story?
 */
+
+//Constants for asteroids 
 var NUM_ROWS = 5;
 var ASTEROID_RADIUS = 12;
 var asteroid;
@@ -41,6 +42,8 @@ var ship;
 var bulletTimer;
 var dx = 4;
 var dy = -4;
+var vx = 5;
+var vy = 0;
 var startMovement = false;
 var asteroidMoveX = 5;
 var asteroidMoveY = 5;
@@ -116,6 +119,7 @@ function livesLeft(){
     txt.setPosition(getWidth() - 95, 30);
     txt.setColor(Color.WHITE);
     add(txt);
+    
 /*
     helicopter.setSize(10, 10);
     var lives = helicopter;
@@ -144,27 +148,46 @@ function gameStart(){
         println("You can start the game");
     }
     startGame--;
+    /*
+    var background = new Rectangle(getWidth(), getHeight());
+    background.setPosition(0, 0); 
+    background.setColor(Color.GREEN); 
+    add(background);
+    
+    var txt = new Text("A group of space monkeys are coming to attack Earth!", "20pt Arial");
+    txt.setPosition(0, 0);
+    txt.setColor(Color.BLACK);
+    add(txt);
+    
+    var txt2 = new Text("Control the helicopter and shoot them down for a prize wothy of a hero.", "20pt Arial");
+    txt.setPosition(0, getHeight() / 3);
+    txt.setColor(Color.BLACK);
+    add(txt2);
+    
+    var txt = new Text("Don't fail or else you will die.", "20pt Arial");
+    txt.setPosition(0, getHeight() / 3 + getHeight() / 3);
+    txt.setColor(Color.BLACK);
+    add(txt);
+    */
 }
 
 //moves asteroids 
-
 function moveAsteroids() {
     checkWall();
-    moveHorizontal(5, 0);
-
+    moveHorizontal();
 }
 
-function moveHorizontal(x, y) {
+function moveHorizontal() {
     for(var i = 0; i < asteroidList.length; i++) {
         var movement = asteroidList[i];
-           movement.move(x, y);
+           movement.move(vx, vy);
     }
 }
 
-function moveVertical(x, y){
+function moveVertical(){
     for(var i = 0; i < asteroidList.length; i++){
-        var movement = asteroidList[i];
-        movement.move(x, y);
+    var movement = asteroidList[i];
+    movement.setPosition(vx, vy);
     }
 }
 
@@ -210,7 +233,7 @@ function moveShip(e){
 function drawBullet(e){
     bullet = new Circle(BULLET_RADIUS);
     bullet.setPosition(ship.getX() + 20, ship.getY());
-    bullet.setBorderWidth(200);
+    bullet.setBorderWidth(2);
     bullet.setBorderColor(Randomizer.nextColor());
     add(bullet);
     //if(bulletTimer == false){
@@ -222,30 +245,30 @@ function drawBullet(e){
 
 function moveBullet(){
     for(var i = 0; i < bulletList.length; i++){
-    	bulletList[i].move(0, dy);
+    	bulletList[i].move(0, dy); 
     	
-var left = getElementAt(bulletList[i].getX() - bulletList[i].getRadius(), bulletList[i].getY());
-var right = getElementAt(bulletList[i].getX() + bulletList[i].getRadius(), bulletList[i].getY());
-var top = getElementAt(bulletList[i].getX(), bulletList[i].getY() - bulletList[i].getRadius());
-var bottom = getElementAt(bulletList[i].getX(), bulletList[i].getY() + bulletList[i].getRadius());
+        var left = getElementAt(bulletList[i].getX() - bulletList[i].getRadius(), bulletList[i].getY());
+        var right = getElementAt(bulletList[i].getX() + bulletList[i].getRadius(), bulletList[i].getY());
+        var top = getElementAt(bulletList[i].getX(), bulletList[i].getY() - bulletList[i].getRadius());
+        var bottom = getElementAt(bulletList[i].getX(), bulletList[i].getY() + bulletList[i].getRadius());
 	
-if(left != bulletList[i] && left != ship && left != null){
-    remove(left);
-    remove(bullet);
-    score++;
-} else if(right != bulletList[i] && right != ship && right != null){
-    remove(right);
-    remove(bullet);
-    score++;
-} else if(top != bulletList[i] && top != ship && top != null){
-    remove(top);
-    remove(bullet);
-    score++;
-	}else if(bottom != bulletList[i] && bottom != ship && bottom != null){
-    remove(bottom);
-    remove(bullet);
-    score++;
-}
+        if(left != bulletList[i] && left != ship && left != null){
+            remove(left);
+            remove(bullet);
+            score++;
+        } else if(right != bulletList[i] && right != ship && right != null){
+            remove(right);
+            remove(bullet);
+            score++;
+        } else if(top != bulletList[i] && top != ship && top != null){
+            remove(top);
+            remove(bullet);
+            score++;
+	    }else if(bottom != bulletList[i] && bottom != ship && bottom != null){
+            remove(bottom);
+            remove(bullet);
+            score++;
+        }
     	
         if(bulletList[i].getY() <= 0 - BULLET_RADIUS){
             stopTimer(moveBullet);
@@ -257,27 +280,26 @@ if(left != bulletList[i] && left != ship && left != null){
 
 function checkWall(){
     var counter = 0; 
+    var rows = 0; 
     for(var i = 0; i < asteroidList.length; i++){
         var monkey = asteroidList[i];
+        var rows = 0
     	// Bounce off right wall
     	if(monkey.getX() + monkey.getRadius() >= getWidth()){
-    	    moveVertical(0, 5);
-    	    moveHorizontal(-5, 0);
-    	    counter++;
-    	    if (counter % 2 == 1 ) { 
-    	        moveVertical(0, 0);
-    	    }
+    	    vx = -vx;
+        //rows++;
     	}
     	
     	// Bounce off left wall
     	if(monkey.getX() - monkey.getRadius() <= 0){
-    	    moveHorizontal(5, 0);
-    	    moveVertical(0, 5);
-    	}
-    	
-    	// Bounce off bottom wall
-    	if(monkey.getY() + monkey.getRadius() >= getHeight()){
-            //move
+    	    vx = -vx;
+    	    //moveHorizontal(vx, 0);
+    	    //moveVertical(0, 1);
+    	    /*rows++; 
+    	    if (rows % 2 == 1) {
+    	        x = -x; 
+    	    }
+    	 */      
     	}
     }
 }

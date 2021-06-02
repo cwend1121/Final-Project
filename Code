@@ -38,7 +38,7 @@ var ship;
 var bulletTimer;
 var dx = 4;
 var dy = -4;
-var vx = 5;
+var vx = 2;
 var vy = 0;
 var startMovement = false;
 var counter = 0;
@@ -219,7 +219,7 @@ function moveVertical(){
         var movement = monkeyList[i];
         movement.move(0, vy);
         counter++;
-        if(counter == 3){
+        if(counter == 1){
             movement.move(0, vy);
             counter = 0;
         }

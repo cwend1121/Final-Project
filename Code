@@ -1,6 +1,5 @@
 //SPACE MONKEYS (copyright pending)
 /*things to work on (problems for future us):
-*space monkeys - cadence
 *breaking the monkeys/aliens
 *bullet limit
 */
@@ -30,8 +29,8 @@ var ship;
 var bulletTimer;
 var dx = 4;
 var dy = -4;
-var vx = 10;
-var vy = 10;
+var vx = 2;
+var vy = 0;
 var startMovement = false;
 var counter = 0;
 
@@ -96,7 +95,7 @@ txt7.setPosition(getWidth() / 2 - 170, getHeight() / 2 + 9);
 txt7.setColor(Color.WHITE);
 
 function start(){
-    setTimer(gameStart, 10);
+    setTimer(gameStart, 1000);
 }
 
 function gameStart(){

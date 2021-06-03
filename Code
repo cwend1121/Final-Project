@@ -9,6 +9,7 @@ var NUM_ROWS = 5;
 var num = Randomizer.nextInt(1, 3);
 var MONKEY_RADIUS = 12;
 var monkey;
+var txtScore;
 var monkeyList = [];
 var MONKEY_TOP_OFFSET = 10; 
 var MONKEY_SPACING = MONKEY_RADIUS * 2;
@@ -29,7 +30,7 @@ var ship;
 var bulletTimer;
 var dx = 4;
 var dy = -4;
-var vx = 2;
+var vx = 5;
 var vy = 0;
 var startMovement = false;
 var counter = 0;
@@ -41,45 +42,52 @@ var startGame = 10;
 var winner = false;
 var loser = true;
 
+var background = new Rectangle(getWidth(), getHeight());
+
 //Constants For Start Card
 var backgroundStart = new Rectangle(getWidth(), getHeight());
 backgroundStart.setPosition(0, 0); 
 backgroundStart.setColor(Color.GREEN);
 add(backgroundStart);
      
-var txt = new Text("A group of space monkeys", "20pt Arial");
-txt.setPosition(getWidth() / 10, 50);
+var txt = new Text("A Group of Space Monkeys", "20pt Arial");
+txt.setPosition(getWidth() / 10 - 10, 50);
 txt.setColor(Color.BLACK);
 add(txt);
     
-var txt2 = new Text("are coming to attack Earth!", "20pt Arial");
-txt2.setPosition(getWidth() / 10 - 3, 80);
+var txt2 = new Text("are Coming to Attack Earth", "20pt Arial");
+txt2.setPosition(getWidth() / 10 - 7, 80);
 txt2.setColor(Color.BLACK);
 add(txt2);
 
-var txt3 = new Text("Control the helicopter and shoot", "20pt Arial");
-txt3.setPosition(10, getHeight() / 3);
+var txt3 = new Text("with Alien Spaceships!", "20pt Arial");
+txt3.setPosition(getWidth() / 10 + 20, 110);
 txt3.setColor(Color.BLACK);
 add(txt3);
 
-var txt4 = new Text("them down for a prize worthy of", "20pt Arial");
-txt4.setPosition(15, getHeight() / 3 + 30);
+var txt4 = new Text("Control the Helicopter and Shoot", "20pt Arial");
+txt4.setPosition(5, getHeight() / 3);
 txt4.setColor(Color.BLACK);
 add(txt4);
 
-var txt5 = new Text("a hero... YOUR MOM", "20pt Arial");
-txt5.setPosition(getWidth() / 4 - 25, getHeight() / 3 + 60);
+var txt5 = new Text("Them Down for a Prize Worthy of", "20pt Arial");
+txt5.setPosition(3, getHeight() / 3 + 30);
 txt5.setColor(Color.BLACK);
 add(txt5);
 
-var txt6 = new Text("Don't fail or else you will die.", "20pt Arial");
-txt6.setPosition(30, getHeight() / 3 + 140);
-txt6.setColor(Color.RED);
+var txt6 = new Text("a Hero... YOUR MOM", "20pt Arial");
+txt6.setPosition(getWidth() / 4 - 35, getHeight() / 3 + 60);
+txt6.setColor(Color.BLACK);
 add(txt6);
+
+var txt7 = new Text("Don't Fail or Else you Will Die.", "20pt Arial");
+txt7.setPosition(20, getHeight() / 3 + 120);
+txt7.setColor(Color.RED);
+add(txt7);
         
 var monkeyPicture = new WebImage("https://static.codehs.com/img/library/characters/monkey.jpg");
 monkeyPicture.setSize(200, 160);
-monkeyPicture.setPosition(getWidth() / 4, getHeight() - 170);
+monkeyPicture.setPosition(getWidth() / 4, getHeight() - 180);
 add(monkeyPicture);
         
 var rect = new Rectangle(getWidth(), 30);
@@ -90,9 +98,9 @@ var backgroundStart2 = new Rectangle(getWidth(), getHeight());
 backgroundStart2.setPosition(0, 0); 
 backgroundStart2.setColor(Color.BLACK);
         
-var txt7 = new Text("Presenting: Space Monkeys", "20pt Arial");
-txt7.setPosition(getWidth() / 2 - 170, getHeight() / 2 + 9);
-txt7.setColor(Color.WHITE);
+var txt8 = new Text("Presenting: Space Monkeys", "20pt Arial");
+txt8.setPosition(getWidth() / 2 - 170, getHeight() / 2 + 9);
+txt8.setColor(Color.WHITE);
 
 function start(){
     setTimer(gameStart, 1000);
@@ -108,16 +116,17 @@ function gameStart(){
         remove(txt4);
         remove(txt5);
         remove(txt6);
+        remove(txt7);
         remove(monkeyPicture);
         
         add(backgroundStart2);
         add(rect);
-        add(txt7);
+        add(txt8);
     }
     if(startGame == 0){
         remove(backgroundStart2); 
         remove(rect);
-        remove(txt7);
+        remove(txt8);
         
         startMovement = true;
         println("You can start the game");
@@ -126,7 +135,6 @@ function gameStart(){
         setBackground();
         setMonkeys(); 
         setScore();
-        livesLeft();
         setTimer(moveMonkeys, 250);
     
         //Bullet And Ship Code
@@ -134,14 +142,10 @@ function gameStart(){
         mouseMoveMethod(moveShip);
 	    mouseClickMethod(drawBullet);
     }
-    if(startGame == -1){
-        println(startGame);
-    }
 }
 
 //Adds Background
 function setBackground(){
-    var background = new Rectangle(getWidth(), getHeight());
     background.setPosition(0, 0); 
     background.setColor(Color.BLACK); 
     add(background);
@@ -186,45 +190,20 @@ function setMonkeys(){
 }
 
 function setScore(){
-    var txtScore = new Text("Score: " + score, "20pt Arial");
+    txtScore = new Text("Score: " + score, "20pt Arial");
     txtScore.setPosition(5, 30);
     txtScore.setColor(Color.WHITE);
     add(txtScore);
 }
 
 function livesLeft(){
-    var txtLives = new Text("Lives: " + numLives, "20pt Arial");
-    txtLives.setPosition(getWidth() - 95, 30);
-    txtLives.setColor(Color.WHITE);
-
-    helicopter.setSize(10, 10);
-    var monkeyElem = getElementAt(ship); 
-    if(monkeyElem == monkey.getX()) {
-        numLives--; 
+    for(var i = 0; i < monkeyList.length; i++) { 
+        var monkeyYCoord = monkeyList[i];
+        if(monkeyYCoord.getY() + MONKEY_RADIUS >= getHeight() - 40) {
+            stopTimer(moveMonkeys);
+            gameOver();
+        }
     }
-    if(numLives == 0) {
-        gameOver();
-    }
-    
-    add(txtLives);
-    /*var lives = helicopter;
-    var lives2 = helicopter;
-    var lives3 = helicopter;
-    lives.setPosition (20, 20);
-    lives2.setPosition(40, 20);
-    lives3.setPosition(60, 20);
-
-    if(ship.getX() == monkeyList){
-        numLives--;
-    }
-    if(numLives == 2){
-        remove(lives3);
-    }else if(numLives == 1){
-        remove(lives2);
-    }else if(numLives == 0){
-        remove(lives);
-        println("Game Over");
-    }*/ 
 }
 
 //Moves Monkeys 
@@ -254,13 +233,15 @@ function moveVertical(){
 
 //Getting A Game Over	
 function gameOver(){
+    startMovement = false; 
+    
 	var rectOver = new Rectangle(getWidth(), 30);
     rectOver.setPosition(0, getHeight() / 2 - 15);
     rectOver.setColor(Color.red);
     add(rectOver);
     
-    var txtOver = new Text("Game Over. You Lose.", "20pt Arial");
-    txtOver.setPosition(getWidth() / 2 - 130, getHeight() / 2 + 9);
+    var txtOver = new Text("Game Over! Monkeys Win.", "20pt Arial");
+    txtOver.setPosition(40, getHeight() / 2 + 9);
     txtOver.setColor(Color.WHITE);
     add(txtOver);
 }
@@ -305,39 +286,35 @@ function drawBullet(e){
 }
 
 function moveBullet(){
-    for(var i = 0; i < bulletList.length; i++){
-    	bulletList[i].move(0, dy); 
-    	/*var elem = monkey.getX() - MONKEY_RADIUS;
-    	if(bulletList[i].getX() - BULLET_RADIUS == elem){
-    	    remove(bullet);
-    	    remove(elem);
-    	}*/
-    	
-        var left = getElementAt(bulletList[i].getX() - bulletList[i].getRadius(), bulletList[i].getY());
-        var right = getElementAt(bulletList[i].getX() + bulletList[i].getRadius(), bulletList[i].getY());
-        var top = getElementAt(bulletList[i].getX(), bulletList[i].getY() - bulletList[i].getRadius());
-        var bottom = getElementAt(bulletList[i].getX(), bulletList[i].getY() + bulletList[i].getRadius());
-	
+    for(var o = 0; o < bulletList.length; o++){
+    	bulletList[o].move(0, dy); 
+        	for(var i = 0; i < monkeyList.length; i++){
+            	var myMonkey = monkeyList[i];
+            	var bullet = bulletList[o];
+            	
+            	var a = bullet.getX() - myMonkey.getX();
+            	var b = bullet.getY() - myMonkey.getY();
+            	
+            	var distance = Math.sqrt(a^2 + b^2);
+            	var sum = MONKEY_RADIUS + BULLET_RADIUS;
+            	var top = getElementAt(bulletList[o].getX(), bulletList[o].getY() - bulletList[o].getRadius());
+            	
+            	if(distance <= sum){
+            	    if(top != background && top != ship && top != txtScore){
+            	        remove(top);
+            	        remove(bullet);
+            	        score = score + 10;
+            	        txtScore = ("Score: " + score);
+           	        if(score >= 500){
+            	            
+            	        }
+            	    }
+            	}
+            	
 
-        if(left == monkey){
-            remove(left);
-            remove(bulletList[i]);
-            score++;
-        } else if(right == monkey){
-            remove(right);
-            remove(bulletList[i]);
-            score++;
-        } else if(top == monkey){
-            remove(top);
-            remove(bulletList[i]);
-            score++;
-        }
-        if(bulletList[i].getY() <= 0 - BULLET_RADIUS){
-            stopTimer(moveBullet);
-            bulletList.remove(i);
-        }
+
+        	}
     }
-    
 }
 
 function checkWall(){
@@ -358,5 +335,8 @@ function checkWall(){
     	    moveVertical();
     	    vy = 1;
     	}
+    }
+    for (var i = 0; i < monkeyList.length; i++) {
+        livesLeft(); 
     }
 }

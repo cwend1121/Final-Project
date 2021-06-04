@@ -249,6 +249,7 @@ function gameOver(){
     txtOver.setPosition(40, getHeight() / 2 + 9);
     txtOver.setColor(Color.WHITE);
     add(txtOver);
+    won = true;
 }
 
 

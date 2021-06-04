@@ -1,7 +1,5 @@
 //SPACE MONKEYS (copyright pending)
 /*things to work on (problems for future us):
-*breaking the monkeys/aliens
-*bullet limit
 */
 
 //Constants For Monkeys
@@ -28,7 +26,7 @@ var helicopter = new WebImage("https://static.codehs.com/img/library/objects/hel
 //Constants For Movement 
 var ship;
 var bulletTimer;
-var dx = 4;
+var dx = 0;
 var dy = -4;
 var vx = 5;
 var vy = 0;
@@ -41,6 +39,10 @@ var numLives = 3;
 var startGame = 10;
 var winner = false;
 var loser = true;
+var rectWin;
+var txtWin;
+var won = false;
+
 
 var background = new Rectangle(getWidth(), getHeight());
 
@@ -103,7 +105,10 @@ txt8.setPosition(getWidth() / 2 - 170, getHeight() / 2 + 9);
 txt8.setColor(Color.WHITE);
 
 function start(){
+    remove(txtWin);
+    remove(rectWin);
     setTimer(gameStart, 1000);
+    setTimer(moveBullet, 10);
 }
 
 function gameStart(){
@@ -246,17 +251,6 @@ function gameOver(){
     add(txtOver);
 }
 
-function winGame(){
-    var rectWin = new Rectangle(getWidth(), 30);
-    rectWin.setPosition(0, getHeight() / 2 - 15);
-    rectWin.setColor(Color.green);
-    add(rectWin);
-    
-    var txtWin = new Text("You Win. Welcome to the Elite.", "20pt Arial");
-    txtWin.setPosition(getWidth() / 2 - 180, getHeight() / 2 + 9);
-    txtWin.setColor(Color.WHITE);
-    add(txtWin);
-}
 
 //Spaceship Code
 function drawShip(){
@@ -268,21 +262,23 @@ function drawShip(){
 
 //Move Ship
 function moveShip(e){
-    ship.setPosition(e.getX() - SHIP_WIDTH/2, getHeight() - SHIP_OFFSET - SHIP_HEIGHT);
+    if(won == false){
+        ship.setPosition(e.getX() - SHIP_WIDTH/2, getHeight() - SHIP_OFFSET - SHIP_HEIGHT);
+    }
 }
 
 //Shoots Bullets
 function drawBullet(e){
-    bullet = new Circle(BULLET_RADIUS);
-    bullet.setPosition(ship.getX() + 20, ship.getY());
-    bullet.setBorderWidth(2);
-    bullet.setBorderColor(Randomizer.nextColor());
-    add(bullet);
-    //if(bulletTimer == false){
-        setTimer(moveBullet, 10);
-        //bulletTimer = true;
-    //}
-    bulletList.push(bullet);
+    if(bulletList.length <= 3 && won == false){
+        bullet = new Circle(BULLET_RADIUS);
+        bullet.setPosition(ship.getX() + 20, ship.getY());
+        bullet.setBorderWidth(2);
+        bullet.setBorderColor(Randomizer.nextColor());
+        add(bullet);
+            
+        bulletList.push(bullet);
+    }
+    
 }
 
 function moveBullet(){
@@ -292,28 +288,43 @@ function moveBullet(){
             	var myMonkey = monkeyList[i];
             	var bullet = bulletList[o];
             	
+                if(bullet.getY() <= -10){
+                    bulletList.remove(o);
+                    o--;
+                    break;
+                }
+            	
             	var a = bullet.getX() - myMonkey.getX();
             	var b = bullet.getY() - myMonkey.getY();
+
             	
-            	var distance = Math.sqrt(a^2 + b^2);
+            	var distance = Math.sqrt(a**2 + b**2);
             	var sum = MONKEY_RADIUS + BULLET_RADIUS;
             	var top = getElementAt(bulletList[o].getX(), bulletList[o].getY() - bulletList[o].getRadius());
             	
             	if(distance <= sum){
             	    if(top != background && top != ship && top != txtScore){
-            	        remove(top);
             	        remove(bullet);
+            	        bulletList.remove(o);
+            	        o--;
+            	        
+            	        remove(myMonkey);
+            	        monkeyList.remove(i);
+            	        i--;
+            	        
             	        score = score + 10;
-            	        txtScore = ("Score: " + score);
-           	        if(score >= 500){
-            	            
-            	        }
-            	    }
+            	        txtScore.setText("Score: " + score);
+            	        break;
+                    }
             	}
             	
 
-
         	}
+    }
+    
+    if(score >= 500){
+        defeatMonkey();
+        won = true;
     }
 }
 
@@ -327,16 +338,31 @@ function checkWall(){
     	if(monkey.getX() + monkey.getRadius() >= getWidth()){
     	    vx = -vx;
     	    moveVertical();
-    	    vy = 1;
+    	    vy = 5;
+    	    break;
     	}
     	// Bounce off left wall
     	if(monkey.getX() - monkey.getRadius() <= 0){
     	    vx = -vx;
     	    moveVertical();
-    	    vy = 1;
+    	    vy = 5;
+    	    break;
     	}
     }
     for (var i = 0; i < monkeyList.length; i++) {
         livesLeft(); 
     }
+}
+
+function defeatMonkey() {
+    rectWin = new Rectangle(getWidth(), 30);
+    rectWin.setPosition(0, getHeight() / 2 - 15);
+    rectWin.setColor(Color.green);
+    add(rectWin);
+    
+    txtWin = new Text("You Win. Welcome to the Elite.", "20pt Arial");
+    txtWin.setPosition(getWidth() / 2 - 180, getHeight() / 2 + 9);
+    txtWin.setColor(Color.WHITE);
+    add(txtWin);
+    
 }
